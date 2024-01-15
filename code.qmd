@@ -1,0 +1,67 @@
+
+```{r}
+#| include: false
+#| warning: false
+#| message: false
+#| 
+#install.packages("opendatatoronto")
+#install.packages("janitor")
+#install.packages("tidyverse")
+
+library(opendatatoronto)
+library(janitor)
+library(tidyverse)
+
+
+mental_health_package <- search_packages("Mental Health Act Apprehensions")
+
+mental_health_resources <- 
+  mental_health_package %>%
+  list_package_resources()
+
+raw_analysis_data <- 
+  mental_health_resources[4,] %>%
+  get_resource()
+
+analysis_data <-
+  clean_names(raw_analysis_data)
+```
+
+```{r}
+#| label: year-report
+#| fig-cap: Counts of Apprehend Reports in Each Year
+#| echo: false
+
+
+analysis_data |>
+  ggplot(aes(x = report_year)) +
+  geom_bar() +
+  theme_minimal() + # Make the theme neater
+  labs(x = "Year", y = "Number of reports") 
+
+```
+
+```{r}
+#| label: fig-group
+#| fig-cap: Gender and Age of People Apprehended
+#| fig-subcap: ["Gender","Age"]
+#| layout-ncol: 2
+#| echo: false
+#| warning: false
+#| message: false
+
+analysis_data |>
+  ggplot(aes(x = sex)) +
+  geom_histogram(stat = "count")+
+  theme_minimal() + # Make the theme neater
+  labs(x = "Gender", y = "Number of reports") 
+
+analysis_data |>
+  ggplot(aes(x = age_cohort)) +
+  geom_histogram(stat = "count")+
+  theme_minimal() + # Make the theme neater
+  labs(x = "Age Cohort", y = "Number of reports") 
+
+
+```
+
